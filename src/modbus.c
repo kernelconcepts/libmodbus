@@ -731,15 +731,24 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
     switch (function) {
     case MODBUS_FC_READ_COILS:
     case MODBUS_FC_READ_DISCRETE_INPUTS: {
-        unsigned int is_input = (function == MODBUS_FC_READ_DISCRETE_INPUTS);
-        int start_bits = is_input ? mb_mapping->start_input_bits : mb_mapping->start_bits;
-        int nb_bits = is_input ? mb_mapping->nb_input_bits : mb_mapping->nb_bits;
-        uint8_t *tab_bits = is_input ? mb_mapping->tab_input_bits : mb_mapping->tab_bits;
+        unsigned int is_input;
+        int start_bits;
+        int nb_bits;
+        uint8_t *tab_bits;
+        int nb;
+        int mapping_address;
+
+        is_input = (function == MODBUS_FC_READ_DISCRETE_INPUTS);
         const char * const name = is_input ? "read_input_bits" : "read_bits";
-        int nb = (req[offset + 3] << 8) + req[offset + 4];
+ 
+        start_bits = is_input ? mb_mapping->start_input_bits : mb_mapping->start_bits;
+        nb_bits = is_input ? mb_mapping->nb_input_bits : mb_mapping->nb_bits;
+        tab_bits = is_input ? mb_mapping->tab_input_bits : mb_mapping->tab_bits;
+        nb = (req[offset + 3] << 8) + req[offset + 4];
+       
         /* The mapping can be shifted to reduce memory consumption and it
            doesn't always start at address zero. */
-        int mapping_address = address - start_bits;
+        mapping_address = address - start_bits;
 
         if (nb < 1 || MODBUS_MAX_READ_BITS < nb) {
             rsp_length = response_exception(
@@ -762,15 +771,24 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
         break;
     case MODBUS_FC_READ_HOLDING_REGISTERS:
     case MODBUS_FC_READ_INPUT_REGISTERS: {
-        unsigned int is_input = (function == MODBUS_FC_READ_INPUT_REGISTERS);
-        int start_registers = is_input ? mb_mapping->start_input_registers : mb_mapping->start_registers;
-        int nb_registers = is_input ? mb_mapping->nb_input_registers : mb_mapping->nb_registers;
-        uint16_t *tab_registers = is_input ? mb_mapping->tab_input_registers : mb_mapping->tab_registers;
+        unsigned int is_input;
+        int start_registers;
+        int nb_registers;
+        uint16_t *tab_registers;
+        int nb;
+        int mapping_address;
+
+        is_input = (function == MODBUS_FC_READ_INPUT_REGISTERS);
         const char * const name = is_input ? "read_input_registers" : "read_registers";
-        int nb = (req[offset + 3] << 8) + req[offset + 4];
+
+        start_registers = is_input ? mb_mapping->start_input_registers : mb_mapping->start_registers;
+        nb_registers = is_input ? mb_mapping->nb_input_registers : mb_mapping->nb_registers;
+        tab_registers = is_input ? mb_mapping->tab_input_registers : mb_mapping->tab_registers;
+        nb = (req[offset + 3] << 8) + req[offset + 4];
+        
         /* The mapping can be shifted to reduce memory consumption and it
            doesn't always start at address zero. */
-        int mapping_address = address - start_registers;
+        mapping_address = address - start_registers;
 
         if (nb < 1 || MODBUS_MAX_READ_REGISTERS < nb) {
             rsp_length = response_exception(
@@ -795,7 +813,9 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
     }
         break;
     case MODBUS_FC_WRITE_SINGLE_COIL: {
-        int mapping_address = address - mb_mapping->start_bits;
+        int mapping_address;
+
+        mapping_address = address - mb_mapping->start_bits;
 
         if (mapping_address < 0 || mapping_address >= mb_mapping->nb_bits) {
             rsp_length = response_exception(
@@ -803,8 +823,9 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
                 "Illegal data address 0x%0X in write_bit\n",
                 address);
         } else {
-            int data = (req[offset + 3] << 8) + req[offset + 4];
+            int data;
 
+            data = (req[offset + 3] << 8) + req[offset + 4];
             if (data == 0xFF00 || data == 0x0) {
                 mb_mapping->tab_bits[mapping_address] = data ? ON : OFF;
                 memcpy(rsp, req, req_length);
@@ -820,7 +841,9 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
     }
         break;
     case MODBUS_FC_WRITE_SINGLE_REGISTER: {
-        int mapping_address = address - mb_mapping->start_registers;
+        int mapping_address;
+        
+        mapping_address = address - mb_mapping->start_registers;
 
         if (mapping_address < 0 || mapping_address >= mb_mapping->nb_registers) {
             rsp_length = response_exception(
@@ -829,8 +852,9 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
                 "Illegal data address 0x%0X in write_register\n",
                 address);
         } else {
-            int data = (req[offset + 3] << 8) + req[offset + 4];
-
+            int data;
+            
+            data = (req[offset + 3] << 8) + req[offset + 4];
             mb_mapping->tab_registers[mapping_address] = data;
             memcpy(rsp, req, req_length);
             rsp_length = req_length;
@@ -838,9 +862,13 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
     }
         break;
     case MODBUS_FC_WRITE_MULTIPLE_COILS: {
-        int nb = (req[offset + 3] << 8) + req[offset + 4];
-        int nb_bits = req[offset + 5];
-        int mapping_address = address - mb_mapping->start_bits;
+        int nb;
+        int nb_bits;
+        int mapping_address;
+
+        nb = (req[offset + 3] << 8) + req[offset + 4];
+        nb_bits = req[offset + 5];
+        mapping_address = address - mb_mapping->start_bits;
 
         if (nb < 1 || MODBUS_MAX_WRITE_BITS < nb || nb_bits * 8 < nb) {
             /* May be the indication has been truncated on reading because of
@@ -870,15 +898,19 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
     }
         break;
     case MODBUS_FC_WRITE_MULTIPLE_REGISTERS: {
-        int nb = (req[offset + 3] << 8) + req[offset + 4];
-        int nb_bytes = req[offset + 5];
-        int mapping_address = address - mb_mapping->start_registers;
+        int nb;
+        int nb_bytes;
+        int mapping_address;
+
+        nb = (req[offset + 3] << 8) + req[offset + 4];
+        nb_bytes = req[offset + 5];
+        mapping_address = address - mb_mapping->start_registers;
 
         if (nb < 1 || MODBUS_MAX_WRITE_REGISTERS < nb || nb_bytes != nb * 2) {
             rsp_length = response_exception(
                 ctx, &sft, MODBUS_EXCEPTION_ILLEGAL_DATA_VALUE, rsp, TRUE,
-                "Illegal number of values %d in write_registers (max %d)\n",
-                nb, MODBUS_MAX_WRITE_REGISTERS);
+                "Illegal number of values %d in write_registers (max %d, byte count %d)\n",
+                nb, MODBUS_MAX_WRITE_REGISTERS, nb_bytes);
         } else if (mapping_address < 0 ||
                    (mapping_address + nb) > mb_mapping->nb_registers) {
             rsp_length = response_exception(
@@ -925,17 +957,22 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
         return -1;
         break;
     case MODBUS_FC_MASK_WRITE_REGISTER: {
-        int mapping_address = address - mb_mapping->start_registers;
+        int mapping_address;
 
+        mapping_address = address - mb_mapping->start_registers;
         if (mapping_address < 0 || mapping_address >= mb_mapping->nb_registers) {
             rsp_length = response_exception(
                 ctx, &sft, MODBUS_EXCEPTION_ILLEGAL_DATA_ADDRESS, rsp, FALSE,
                 "Illegal data address 0x%0X in write_register\n",
                 address);
         } else {
-            uint16_t data = mb_mapping->tab_registers[mapping_address];
-            uint16_t and = (req[offset + 3] << 8) + req[offset + 4];
-            uint16_t or = (req[offset + 5] << 8) + req[offset + 6];
+            uint16_t data;
+            uint16_t and;
+            uint16_t or;
+            
+            data = mb_mapping->tab_registers[mapping_address];
+            and = (req[offset + 3] << 8) + req[offset + 4];
+            or = (req[offset + 5] << 8) + req[offset + 6];
 
             data = (data & and) | (or & (~and));
             mb_mapping->tab_registers[mapping_address] = data;
@@ -945,12 +982,19 @@ int modbus_reply(modbus_t *ctx, const uint8_t *req,
     }
         break;
     case MODBUS_FC_WRITE_AND_READ_REGISTERS: {
-        int nb = (req[offset + 3] << 8) + req[offset + 4];
-        uint16_t address_write = (req[offset + 5] << 8) + req[offset + 6];
-        int nb_write = (req[offset + 7] << 8) + req[offset + 8];
-        int nb_write_bytes = req[offset + 9];
-        int mapping_address = address - mb_mapping->start_registers;
-        int mapping_address_write = address_write - mb_mapping->start_registers;
+        int nb;
+        uint16_t address_write;
+        int nb_write;
+        int nb_write_bytes;
+        int mapping_address;
+        int mapping_address_write;
+
+        nb = (req[offset + 3] << 8) + req[offset + 4];
+        address_write = (req[offset + 5] << 8) + req[offset + 6];
+        nb_write = (req[offset + 7] << 8) + req[offset + 8];
+        nb_write_bytes = req[offset + 9];
+        mapping_address = address - mb_mapping->start_registers;
+        mapping_address_write = address_write - mb_mapping->start_registers;
 
         if (nb_write < 1 || MODBUS_MAX_WR_WRITE_REGISTERS < nb_write ||
             nb < 1 || MODBUS_MAX_WR_READ_REGISTERS < nb ||

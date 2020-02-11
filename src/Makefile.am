@@ -20,6 +20,11 @@ libmodbus_la_SOURCES = \
         modbus-tcp.c \
         modbus-tcp.h \
         modbus-tcp-private.h \
+        lfqueue.c \
+        lfqueue.h \
+        modbus-virtual-rtu.c \
+        modbus-virtual-rtu.h \
+        modbus-virtual-rtu-private.h \
         modbus-version.h
 
 libmodbus_la_LDFLAGS = -no-undefined \
@@ -35,7 +40,7 @@ endif
 
 # Header files to install
 libmodbusincludedir = $(includedir)/modbus
-libmodbusinclude_HEADERS = modbus.h modbus-version.h modbus-rtu.h modbus-tcp.h
+libmodbusinclude_HEADERS = modbus.h modbus-version.h modbus-rtu.h modbus-tcp.h modbus-virtual-rtu.h
 
 DISTCLEANFILES = modbus-version.h
 EXTRA_DIST += modbus-version.h.in
