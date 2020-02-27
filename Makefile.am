@@ -3,9 +3,9 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 AM_MAKEFLAGS = --no-print-directory
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libmodbus.pc
-EXTRA_DIST = libmodbus.pc.in
-CLEANFILES += libmodbus.pc
+pkgconfig_DATA = libmodbusepsi.pc
+EXTRA_DIST = libmodbusepsi.pc.in
+CLEANFILES += libmodbusepsi.pc
 
 dist_doc_DATA = MIGRATION README.md
 

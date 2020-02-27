@@ -42,7 +42,7 @@ You can change installation directory with prefix option, eg. `./configure
 properly set up on your system (*/etc/ld.so.conf.d*) and library cache is up to
 date (run `ldconfig` as root if required).
 
-The library provides a *libmodbus.pc* file to use with `pkg-config` to ease your
+The library provides a *libmodbusepsi.pc* file to use with `pkg-config` to ease your
 program compilation and linking.
 
 If you want to compile with Microsoft Visual Studio, you need to install

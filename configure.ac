@@ -22,10 +22,10 @@ m4_define([libmodbus_version],
     [libmodbus_version_major.libmodbus_version_minor.libmodbus_version_micro])
 
 AC_PREREQ([2.63])
-AC_INIT([libmodbus],
+AC_INIT([libmodbusepsi],
         [libmodbus_version],
-        [https://github.com/stephane/libmodbus/issues],
-        [libmodbus],
+        [https://github.com/epsilonrt/libmodbus/issues],
+        [libmodbusepsi],
         [http://libmodbus.org/])
 AC_CONFIG_SRCDIR([src/modbus.c])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -161,13 +161,13 @@ AC_CONFIG_FILES([
         src/win32/modbus.dll.manifest
         tests/Makefile
         doc/Makefile
-        libmodbus.pc
+        libmodbusepsi.pc
 ])
 
 AC_OUTPUT
 AC_MSG_RESULT([
         $PACKAGE $VERSION
-        ===============
+        =========================
 
         prefix:                 ${prefix}
         sysconfdir:             ${sysconfdir}
