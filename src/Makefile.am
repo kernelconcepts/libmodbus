@@ -1,5 +1,5 @@
 EXTRA_DIST =
-lib_LTLIBRARIES = libmodbus.la
+lib_LTLIBRARIES = libmodbusepsi.la
 
 AM_CPPFLAGS = \
     -include $(top_builddir)/config.h \
@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = ${my_CFLAGS}
 
-libmodbus_la_SOURCES = \
+libmodbusepsi_la_SOURCES = \
         modbus.c \
         modbus.h \
         modbus-data.c \
@@ -22,19 +22,19 @@ libmodbus_la_SOURCES = \
         modbus-tcp-private.h \
         modbus-version.h
 
-libmodbus_la_LDFLAGS = -no-undefined \
+libmodbusepsi_la_LDFLAGS = -no-undefined \
         -version-info $(LIBMODBUS_LT_VERSION_INFO)
 
 if OS_WIN32
-libmodbus_la_LIBADD = -lwsock32
+libmodbusepsi_la_LIBADD = -lwsock32
 endif
 
 if OS_QNX
-libmodbus_la_LIBADD = -lsocket
+libmodbusepsi_la_LIBADD = -lsocket
 endif
 
 # Header files to install
-libmodbusincludedir = $(includedir)/modbus
+libmodbusincludedir = $(includedir)/modbusepsi
 libmodbusinclude_HEADERS = modbus.h modbus-version.h modbus-rtu.h modbus-tcp.h
 
 DISTCLEANFILES = modbus-version.h
