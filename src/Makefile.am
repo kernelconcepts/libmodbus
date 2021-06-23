@@ -14,9 +14,15 @@ libmodbusepsi_la_SOURCES = \
         modbus.h \
         modbus-data.c \
         modbus-private.h \
+        modbus-serial.c \
+        modbus-serial.h \
+        modbus-serial-private.h \
         modbus-rtu.c \
         modbus-rtu.h \
         modbus-rtu-private.h \
+        modbus-ascii.c \
+        modbus-ascii.h \
+        modbus-ascii-private.h \
         modbus-tcp.c \
         modbus-tcp.h \
         modbus-tcp-private.h \
@@ -35,7 +41,7 @@ endif
 
 # Header files to install
 libmodbusincludedir = $(includedir)/modbusepsi
-libmodbusinclude_HEADERS = modbus.h modbus-version.h modbus-rtu.h modbus-tcp.h
+libmodbusinclude_HEADERS = modbus.h modbus-version.h modbus-rtu.h modbus-tcp.h modbus-ascii.h modbus-serial.h
 
 DISTCLEANFILES = modbus-version.h
 EXTRA_DIST += modbus-version.h.in
