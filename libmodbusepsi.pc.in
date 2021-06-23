@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: modbusepsi
+Description: Modbus library  (epsilonrt version)
+Version: @VERSION@
+Libs: -L${libdir} -lmodbusepsi
+Cflags: -I${includedir}/modbusepsi
