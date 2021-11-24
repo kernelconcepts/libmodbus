@@ -41,7 +41,7 @@ endif
 
 # Header files to install
 libmodbusincludedir = $(includedir)/modbusepsi
-libmodbusinclude_HEADERS = modbus.h modbus-version.h modbus-rtu.h modbus-tcp.h modbus-ascii.h modbus-serial.h
+libmodbusinclude_HEADERS = modbus.h modbus-version.h modbus-rtu.h modbus-tcp.h modbus-serial.h modbus-ascii.h
 
 DISTCLEANFILES = modbus-version.h
 EXTRA_DIST += modbus-version.h.in
